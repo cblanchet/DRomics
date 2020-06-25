@@ -59,9 +59,13 @@ RNAseqdata <- function(file, check = TRUE,
   
   # control of the design
   design <- table(dose, dnn = "")
-  if (length(design) < 5)
+  if (length(design) < 4)
     stop("Dromics cannot be used with a dose-response design 
-         with less than five tested doses/concentrations")
+         with less than four tested doses/concentrations")
+  if (length(design) == 4)
+    warning("When using DRomics with a dose-response design with only four tested doses/concentrations, 
+            it is recommended to check after the modelling step that all selected models have no more 
+            than 4 parameters")  
   
   fdose <- as.factor(dose)
   tdata <- t(data)
