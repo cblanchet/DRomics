@@ -1,0 +1,9 @@
+# List of operating system package dependencies: put one package per line.
+# Valid for Debian/Ubuntu only.
+libudunits2-dev
+libxml2-dev
+libssl-dev
+libpng-dev
+libtiff5-dev
+libjpeg-dev
+libv8-dev
