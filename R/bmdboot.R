@@ -17,7 +17,7 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
       "A small number of iterations (less than 1000) may not be sufficient
       to ensure a good quality of bootstrap confidence intervals."))
   
-    parallel <- match.arg(parallel, c("no", "snow", "multicore"))
+  parallel <- match.arg(parallel, c("no", "snow", "multicore"))
   if (parallel == "multicore" & .Platform$OS.type == "windows")
   {
     parallel <- "snow"
@@ -29,8 +29,7 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
   if (parallel != "no") progressbar <- FALSE
   
   if (progressbar)
-    cat(strwrap(prefix = "\n", initial = "\n",
-      "The bootstrap may be long if the number of items and the number of bootstrap iterations is high.\n"))
+    cat(strwrap("The bootstrap may be long if the number of items and the number of bootstrap iterations is high."), fill = TRUE)
 
   i.items <- match(items, r$res$id)
   nitems <- length(items)
@@ -76,6 +75,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
     # dataset
     datai <- r$omicdata$data[resitem$irow, ]
     dset <- data.frame(signal = datai, dose = dose)
+    # removing lines with NA values for the signal
+    dset <- dset[complete.cases(dset$signal), ]
     ndata <- nrow(dset)
 
     ############## Model expo ###########
@@ -84,8 +85,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
       b1 <- lestimpar$b
       d1 <- lestimpar$d
       e1 <- lestimpar$e
-      fitted1 <- fExpo(x = dose, d = d1, b = b1, e = e1)
-      resid1 <- datai - fitted1
+      fitted1 <- fExpo(x = dset$dose, d = d1, b = b1, e = e1)
+      resid1 <- dset$signal - fitted1
       
       dsetboot <- dset
       fboot <- function(i)
@@ -135,8 +136,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
       c1 <- lestimpar$c
       d1 <- lestimpar$d
       e1 <- lestimpar$e
-      fitted1 <- fHill(x = dose, b = b1, c = c1, d = d1,  e = e1)
-      resid1 <- datai - fitted1
+      fitted1 <- fHill(x = dset$dose, b = b1, c = c1, d = d1,  e = e1)
+      resid1 <- dset$signal - fitted1
       
       dsetboot <- dset
       fboot <- function(i)
@@ -179,8 +180,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
       c1 <- lestimpar$c
       d1 <- lestimpar$d
       e1 <- lestimpar$e
-      fitted1 <- fLGauss5p(x = dose, b = b1, c = c1, d = d1, e = e1, f = 0)
-      resid1 <- datai - fitted1
+      fitted1 <- fLGauss5p(x = dset$dose, b = b1, c = c1, d = d1, e = e1, f = 0)
+      resid1 <- dset$signal - fitted1
       
       dsetboot <- dset
       fboot <- function(i)
@@ -222,8 +223,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
     {
       b1 <- lestimpar$b
       d1 <- lestimpar$d
-      fitted1 <- flin(x = dose, b = b1, d = d1)
-      resid1 <- datai - fitted1
+      fitted1 <- flin(x = dset$dose, b = b1, d = d1)
+      resid1 <- dset$signal - fitted1
       
       dsetboot <- dset
       fboot <- function(i)
@@ -260,8 +261,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
       d1 <- lestimpar$d
       e1 <- lestimpar$e
       f1 <- lestimpar$f
-      fitted1 <- fGauss5p(x = dose, c = c1, d = d1, b = b1, e = e1, f = f1)
-      resid1 <- datai - fitted1
+      fitted1 <- fGauss5p(x = dset$dose, c = c1, d = d1, b = b1, e = e1, f = f1)
+      resid1 <- dset$signal - fitted1
        
       dsetboot <- dset
       fboot <- function(i)
@@ -331,8 +332,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
       d1 <- lestimpar$d
       e1 <- lestimpar$e
       f1 <- lestimpar$f
-      fitted1 <- fLGauss5p(x = dose, c = c1, d = d1, b = b1, e = e1, f = f1)
-      resid1 <- datai - fitted1
+      fitted1 <- fLGauss5p(x = dset$dose, c = c1, d = d1, b = b1, e = e1, f = f1)
+      resid1 <- dset$signal - fitted1
 
       dsetboot <- dset
       fboot <- function(i)
@@ -400,8 +401,8 @@ bmdboot <- function(r, items = r$res$id, niter = 1000,
     nboot.successful <- niter - sum(sapply(l1, is.null))
     if(nboot.successful < niter * tol) 
     {
-      # warning(strwrap(prefix = "\n", initial = "\n", paste0("Procedure aborted: the fit only converged for ", nboot.successful, 
-      #               " iterations during bootstrapping for item ", items[i], ".")))
+      # warning(strwrap(paste0("Procedure aborted: the fit only converged for ", nboot.successful, 
+      #               " iterations during bootstrapping for item ", items[i], ".")), fill = TRUE)
       return(c(NA, NA, NA, NA, nboot.successful))
     } else
     {
@@ -466,24 +467,22 @@ print.bmdboot <- function(x, ...)
   nNA.BMDboot <- sum(x$res$nboot.successful < x$tol * x$niter)
   if (nNA.BMDboot == 0)
   {
-    cat("Bootstrap confidence interval computation was successful on ", ntot ,
-        "items among", ntot, ".\n")
+    cat(strwrap(paste0("Bootstrap confidence interval computation was successful on ", ntot, " items among", ntot, ".")), fill = TRUE)
   } else
   {
-    cat("Bootstrap confidence interval computation failed on", nNA.BMDboot,
-        "items among", ntot, 
-        "due to lack of convergence of the model fit for a fraction of the bootstrapped samples greater than",
-        x$tol, ".\n")
+    cat(strwrap(paste0("Bootstrap confidence interval computation failed on ", nNA.BMDboot, " items among ", ntot, 
+                       " due to lack of convergence of the model fit for a fraction of the 
+                       bootstrapped samples greater than ", x$tol, ".")), fill = TRUE)
   }
   
   nInf.BMD.zSD.upper <- sum(is.infinite(x$res$BMD.zSD.upper))
   nInf.BMD.xfold.upper <- sum(is.infinite(x$res$BMD.xfold.upper))
-  cat("For", nInf.BMD.zSD.upper, "BMD.zSD values and", nInf.BMD.xfold.upper,
-      "BMD.xfold values among", ntot, 
-      "at least one bound of the 95 percent confidence interval could not be
-      computed due to some bootstrapped BMD values not reachable due to model asymptotes 
-      or reached outside the range of tested doses (bounds coded Inf)).\n")
-  }
+  cat(strwrap(paste0("For ", nInf.BMD.zSD.upper, " BMD.zSD values and ", nInf.BMD.xfold.upper,
+                     " BMD.xfold values among ", ntot, 
+                     " at least one bound of the 95 percent confidence interval could not be 
+                     computed due to some bootstrapped BMD values not reachable due to model asymptotes 
+                     or reached outside the range of tested doses (bounds coded Inf)).")), fill = TRUE)
+}
 
 plot.bmdboot <- function(x, BMDtype = c("zSD", "xfold"), remove.infinite = TRUE,
                          by = c("none", "trend", "model", "typology"), CI.col = "blue",  ...) 

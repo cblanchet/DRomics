@@ -1,4 +1,4 @@
-### import, check metabolomic data
+### import, check continuous anchoring data
 
 continuousanchoringdata <- function(file, check = TRUE)
 {
@@ -41,30 +41,51 @@ continuousanchoringdata <- function(file, check = TRUE)
   (nitems <- nrow(data))
   
   # control of the design
-  if (any(dose) < 0)
+  if (any(dose < 0))
     stop("DRomics cannot be used with negative values of doses.")
   design <- table(dose, dnn = "")
-  if (length(design) < 4)
+  nbdoses <- length(design)
+  nbpts <- sum(design)
+  if ((nbdoses < 4)| (nbpts < 8))
     stop("Dromics cannot be used with a dose-response design 
-    with less than four tested doses/concentrations.")
-  if (length(design) == 4)
+    with less than four tested doses/concentrations or less than eight data points
+         per dose-response curve.")
+  if (nbdoses < 6)
     warning(strwrap(prefix = "\n", initial = "\n",
-      "When using DRomics with a dose-response design with only four tested doses/concentrations, 
-      it is recommended to check after the modelling step that all selected models have no more 
-      than 4 parameters."))
+                    "To optimize the dose-response modelling, it is recommended to use
+      a dose-response design with at least six different tested doses."))
+  
+  # control of the design including on rows with NA values
+  if(any(!complete.cases(data)))
+  {
+    containsNA <- TRUE
+    nonNAdata <- !is.na(data)
+    minnonNAnbpts <- min(rowSums(nonNAdata))
+    if (minnonNAnbpts < 8)
+      stop(strwrap(prefix = "\n", initial = "\n",
+                   "Dromics cannot be used with a dose-response design 
+    with less than eight data points
+         per dose-response curve for each item. You should check your data
+           to eliminate items with too many NA values or impute NA values if 
+           they do not correspond to missing values at random 
+           (e.g. missing values correspond to values 
+        under a limit of quantification)."))
+  } else containsNA <- FALSE
   
   fdose <- as.factor(dose)
   tdata <- t(data)
+  
+  meanwithnarm <- function(v) mean(v, na.rm = TRUE)
   calcmean <- function(i)
   {
-  #   tapply(data[i,], fdose, mean)
-    tapply(tdata[, i], fdose, mean)
+    tapply(tdata[, i], fdose, meanwithnarm)
   }
   s <- sapply(1:(nrowd - 1), calcmean)
   data.mean <- as.matrix(t(s))
   
   reslist <- list(data = data, dose = dose, item = item, 
-                  design = design, data.mean = data.mean)  
+                  design = design, data.mean = data.mean,
+                  containsNA = containsNA)  
   
   return(structure(reslist, class = "continuousanchoringdata"))
 }
@@ -75,10 +96,14 @@ print.continuousanchoringdata <- function(x, ...)
   if (!inherits(x, "continuousanchoringdata"))
     stop("Use only with 'continuousanchoringdata' objects.")
   
-  cat("Elements of the experimental design in order to check the coding of the data :\n")
+  nitems <- length(x$item)
+  nitemswithNA <- nitems - sum(complete.cases(x$data))
+  
+  cat("Elements of the experimental design in order to check the coding of the data:\n")
   cat("Tested doses and number of replicates for each dose:\n")
   print(x$design)
-  cat("Number of endpoints: ", length(x$item),"\n")
+  cat("Number of endpoints:", nitems,"\n")
+  if (nitemswithNA > 0) cat("Number of endpoints with at least one missing data:", nitemswithNA,"\n")
   
   if (length(x$item) > 20)
   {

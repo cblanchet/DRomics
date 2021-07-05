@@ -47,14 +47,15 @@ ui <- fluidPage(
                                                         style="text-align:justify;"),
                                         br(),
                                         h4("DRomics Shiny App runs on the ", 
-                                           a("shiny server of the LBBE", href = "http://lbbe-shiny.univ-lyon1.fr/", TARGET="_blank", style="color:#f28d0f;"), "(see here the ",
-                                           a("DRomics tutorial", href = "Dromics_tutorial.pdf", TARGET="_blank", style="color:#f28d0f;"), "),
-                                           with the develoment version of the DRomics package (available on ", 
+                                           a("shiny server of the LBBE", href = "http://lbbe-shiny.univ-lyon1.fr/", TARGET="_blank", style="color:#f28d0f;"), 
+                                           "with the develoment version of the DRomics package (available on ", 
                                            a("Github", href = "https://github.com/aursiber/DRomics", TARGET="_blank", style="color:#f28d0f;"),")."),
                                         h4("DRomics is also an R package, available on ", 
                                            a("CRAN", href = "https://cran.r-project.org/package=DRomics", TARGET="_blank", style="color:#f28d0f;"), 
                                            " and on ",
-                                           a("this web page", href = "https://lbbe.univ-lyon1.fr/-DRomics-.html", TARGET="_blank", style="color:#f28d0f;"), ".")
+                                           a("this web page", href = "https://lbbe.univ-lyon1.fr/fr/dromics", TARGET="_blank", style="color:#f28d0f;"), "."),
+                                        h4("You can find help about the DRomics Shiny App and the DRomics package ",
+                                           a("here", href = "https://github.com/aursiber/DRomics/blob/master/DRomics_vignette.pdf", TARGET="_blank", style="color:#f28d0f;"), ".")
                         )),
                         hr(style='width: 70%;'),
                         fixedRow(column(8, offset = 2,
@@ -66,7 +67,7 @@ ui <- fluidPage(
                                           a("https://doi.org/10.1021/acs.est.8b04752", href = "https://pubs.acs.org/doi/10.1021/acs.est.8b04752", TARGET = "_blank", style="color:#f28d0f;")),
                                         
                                         br(),
-                                        p("You can find this article at: ", a("https://hal.archives-ouvertes.fr/hal-02309919", href = "https://hal.archives-ouvertes.fr/hal-02309919", TARGET = "_blank", style="color:#f28d0f;")),
+                                        p("You can freely find this article at: ", a("https://hal.archives-ouvertes.fr/hal-02309919", href = "https://hal.archives-ouvertes.fr/hal-02309919", TARGET = "_blank", style="color:#f28d0f;")),
                                         
                                         br(),
                                         p("You can also look at the following citation for a complete example of use:"),
@@ -84,13 +85,13 @@ ui <- fluidPage(
                                         br(),
                                         p(a("Elise Billoir", href = "http://bddc.liec.univ-lorraine.fr/cv/BILLOIR%20E.htm", TARGET = "_blank", style="color:#f28d0f;"),
                                           "- elise.billoir@univ-lorraine.fr - Laboratoire Interdisciplinaire des Environnements Continentaux - Université de Lorraine - Metz - France"),
-                                        p(a("Marie-Laure Delignette-Muller", href = "http://lbbe.univ-lyon1.fr/-Delignette-Muller-Marie-Laure-.html", TARGET = "_blank", style="color:#f28d0f;"),
+                                        p(a("Marie-Laure Delignette-Muller", href = "https://lbbe.univ-lyon1.fr/fr/annuaires-des-membres/delignette-muller-marie-laure", TARGET = "_blank", style="color:#f28d0f;"),
                                           "- marielaure.delignettemuller@vetagro-sup.fr - Laboratoire de Biométrie et Biologie Evolutive - VetAgro Sup - Lyon - France"),
-                                        p(a("Floriane Larras", href = "http://www.ufz.de/index.php?en=42332&nopagecache", TARGET = "_blank", style="color:#f28d0f;"),
-                                          "- floriane.larras@ufz.de - Department of Bioanalytical Ecotoxicology - Helmholtz Center for Environmental Research GmbH - Leipzig - Germany"),
+                                        p(a("Floriane Larras", href = "https://www.researchgate.net/profile/Floriane_Larras", TARGET = "_blank", style="color:#f28d0f;"),
+                                          "- floriane.larras@inrae.fr - Delegation for scientific expertise, foresight and advanced studies (DEPE) - INRAE - Paris - France"),
                                         p(a("Mechthild Schmitt-Jansen", href = "https://www.ufz.de/index.php?en=38467", TARGET = "_blank", style="color:#f28d0f;"),
                                           "- mechthild.schmitt@ufz.de - Department of Bioanalytical Ecotoxicology - Helmholtz Center for Environmental Research GmbH - Leipzig - Germany"),
-                                        p(a("Aurélie Siberchicot", href = "https://lbbe.univ-lyon1.fr/-Siberchicot-Aurelie-.html", TARGET = "_blank", style="color:#f28d0f;"),
+                                        p(a("Aurélie Siberchicot", href = "https://lbbe.univ-lyon1.fr/fr/annuaires-des-membres/siberchicot-aurelie", TARGET = "_blank", style="color:#f28d0f;"),
                                           "- aurelie.siberchicot@univ-lyon1.fr - Laboratoire de Biométrie et Biologie Evolutive - Université Lyon 1 - Lyon - France")
                                         
                         )),
@@ -262,11 +263,15 @@ ui <- fluidPage(
                                                             'ANOVA test' = 'ANOVA')),
                                    h5("See ", a("here", href = "informations_select_methods.txt", TARGET = "_blank", style="text-decoration:underline; color:#9c5c16;"), " information about the selection methods"),
                                    br(),
-                                   textInput('FDR', label = 'False Discovery Rate (FDR) for the Benjamini-Hochberg correction of p-values', value = "0.05"))),
+                                   textInput('FDR', label = 'False Discovery Rate (FDR) for the Benjamini-Hochberg correction of p-values', value = "0.05"),
+                                   h5("See ", a("here", href = "informations_FDR_choice.txt", TARGET = "_blank", style="text-decoration:underline; color:#9c5c16;"), " information about the choice of FDR")
+                                 )
+                               ),
                                fixedRow(
                                  mainPanel(
                                    width = 12,
-                                   withSpinner(verbatimTextOutput('printItemSelect'), type = 4, color = '#9c5c16')
+                                   withSpinner(verbatimTextOutput('printItemSelect'), type = 4, color = '#9c5c16'),
+                                   downloadButton("buttonDowloadItems", "Download all items", icon = icon("fas fa-download"))
                                  )
                                )
                         )
@@ -291,20 +296,15 @@ ui <- fluidPage(
                                             h5("See ", a("here", href = "informations_modelling_procedure.txt", TARGET = "_blank", style="text-decoration:underline; color:#9c5c16;"), " information about the dose reponse modelling procedure")
                                      ),
                                      column(width = 2, actionButton("buttonDrcfit", "Fit", icon = icon("bar-chart-o"), style='font-size:200%')),
-                                     column(width = 3,
-                                            useShinyjs(),
-                                            hidden(
-                                              downloadButton("buttonDownloadDrcfitplot", HTML("Download all the fitted<br/>dose-response plots"), style = 'background-color:#e6e6e6; color:#000000; border-color:#9d9d9d; font-size:110%;', icon = icon("fas fa-download"))
+                                     column(width = 4,
+                                            sidebarPanel(
+                                              style = "background-color: #FFFFFF;",
+                                              width = 12,
+                                              icon("exclamation-triangle"),
+                                              "These ongoing calculations can take from minutes to about an hour. Your patience should be proportional to the size of your data and the chosen FDR."
                                             )
                                      )
                                    )
-                                 ),
-                                 
-                                 sidebarPanel(
-                                   style = "background-color: #FFFFFF;",
-                                   width = 4,
-                                   icon("exclamation-triangle"),
-                                   "These ongoing calculations can take from minutes to about an hour. Your patience should be proportional to the size of your data and the chosen FDR."
                                  )
                                ),
                                
@@ -321,12 +321,21 @@ ui <- fluidPage(
                                                                      'dose / residuals' = 'dose_residuals',
                                                                      'fitted / residuals' = 'fitted_residuals'),
                                                          selected = "dose_fitted")),
-                                     column(3,
+                                     column(width = 2,
                                             radioButtons('logdosescale',
                                                          'Log dose-scale', inline = TRUE,
                                                          choices = c('yes' = 'TRUE',
                                                                      'no' = 'FALSE'),
-                                                         selected = "FALSE"))
+                                                         selected = "FALSE")),
+                                     column(width = 3,
+                                            useShinyjs(),
+                                            hidden(
+                                              downloadButton("buttonDownloadDrcfitplot", 
+                                                             HTML("Download all the fitted<br/>dose-response plots"), 
+                                                             style = 'background-color:#F5aa4c; color:#000000; border-color:#9d9d9d; font-size:110%;', 
+                                                             icon = icon("fas fa-download"))
+                                            )
+                                     )
                                    ),
                                    br(),
                                    withSpinner(plotOutput("plotDrcfit", width = "100%", height = "900px"), type = 4, color = '#9c5c16'),
@@ -415,6 +424,14 @@ ui <- fluidPage(
                                                 selected = 'none'),
                                    h5("See ", a("here", href = "informations_modelling_procedure.txt", TARGET = "_blank", style="text-decoration:underline; color:#9c5c16;"), " information about typologies"),
                                    hr(),
+                                   radioButtons('fileformat_bmdcalc', 
+                                                'File format',
+                                                choices = c('pdf' = 'pdf',
+                                                            'png' = 'png',
+                                                            'jpeg' = 'jpeg',
+                                                            'tiff' = 'tiff',
+                                                            'svg' = 'svg'),
+                                                selected = 'pdf'),
                                    downloadButton("buttonPlotBmdcalc", "Download figure", icon = icon("fas fa-download"))
                                  ),
                                  mainPanel(
@@ -434,6 +451,10 @@ ui <- fluidPage(
                       fixedRow(
                         column(8, 
                                br(), HTML("<font face=verdana size=5 color=#9c5c16><b>R CODE TO GO FURTHER</b></font>"), br(), br(), br(),
+                               tags$blockquote("To see what more you can do using the R package, we recommend you to consult ", 
+                                               a("here", href = "https://github.com/aursiber/DRomics/blob/master/DRomics_vignette.pdf", TARGET="_blank", style="color:#f28d0f;"),
+                                               "the vignette of the package."), 
+                               br(), 
                                downloadButton("buttonDownRCode", "Download R Code", icon = icon("fas fa-download"), style = 'background-color:#e6e6e6; color:#000000; border-color:#9d9d9d;'), br(), br(),
                                verbatimTextOutput('printRCode'), br(), br(),
                                downloadButton("buttonDownRCodeFurther", "Download R Code to go further", icon = icon("fas fa-download"), style = 'background-color:#e6e6e6; color:#000000; border-color:#9d9d9d;'), br(), br(),

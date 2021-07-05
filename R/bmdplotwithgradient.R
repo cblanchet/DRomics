@@ -7,7 +7,7 @@ bmdplotwithgradient <- function(extendedres, BMDtype = c("zSD", "xfold"),
                                    facetby, shapeby, npoints = 50, 
                                    line.size, point.size = 1,
                                    ncol4faceting, limits4colgradient,
-                                   lowercol = "darkgreen", uppercol = "darkred",
+                                   lowercol = "darkblue", uppercol = "darkred",
                                    add.label = FALSE, label.size = 2,
                                     BMD_log_transfo = FALSE)
 {
@@ -215,6 +215,8 @@ bmdplotwithgradient <- function(extendedres, BMDtype = c("zSD", "xfold"),
   
   if (BMD_log_transfo)
     gg <- gg + scale_x_log10()
+  
+  gg <- gg + xlab("BMD")
     
   return(gg)
 }

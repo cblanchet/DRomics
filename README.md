@@ -1,15 +1,16 @@
-[![Travis-CI Build Status](https://travis-ci.org/aursiber/DRomics.svg?branch=master)](https://travis-ci.org/aursiber/DRomics)
-[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/q8o4a1i8t2394054?svg=true)](https://ci.appveyor.com/project/aursiber/DRomics/branch/master)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/DRomics)](http://cran.r-project.org/package=DRomics)
 [![CRAN Downloads](https://cranlogs.r-pkg.org/badges/DRomics)](https://cran.r-project.org/package=DRomics)
+[![R-CMD-check](https://github.com/aursiber/DRomics/workflows/R-CMD-check/badge.svg)](https://github.com/aursiber/DRomics/actions)
 
-All informations about DRomics can also be found at <a href="https://lbbe.univ-lyon1.fr/-DRomics-.html" target="_blank">https://lbbe.univ-lyon1.fr/-DRomics-.html</a>.
+All informations about DRomics can also be found at <a href="https://lbbe.univ-lyon1.fr/fr/dromics" target="_blank">https://lbbe.univ-lyon1.fr/fr/dromics</a>.
 
 
 # Overview
 `DRomics` is a freely available on-line tool for dose-response (or concentration-response) characterization from omics data. It is especially dedicated to omics data obtained using a typical dose-response design, favoring a great number of tested doses (or concentrations, at least 6, and the more the better) rather than a great number of replicates (no need of three replicates). After a first optional step which consists to import, check and if needed normalize/transform the data (step 1), the aim of the proposed workflow is to select monotonic and/or biphasic significantly responsive items (e.g. probes, metabolites) (step 2), to choose the best-fit model among a predefined family of monotonic and biphasic models to describe the response of each selected item (step 3), and to derive a benchmark dose or concentration from each fitted curve (step 4).
 
-In the available version, `DRomics` supports single-channel microarray data (in log2 scale), RNAseq data (in raw counts) or metabolomics data (in log scale).
+In the available version, `DRomics` supports single-channel microarray data (in log2 scale), RNAseq data (in raw counts), metabolomics data or other continuous
+omics data and continuous anchoring data (for continuous omics or anchoring data,
+in log scale or a scale that enables the use of a normal error model).
 
 
 # The package 
@@ -40,6 +41,25 @@ Finally load the package in your current R session with the following R command:
 library(DRomics)
 ```
 
+
+# The vignette
+A vignette is attached to the `DRomics` package.
+
+The development version of the pdf of this vignette can be see 
+<a href="https://github.com/aursiber/DRomics/blob/master/DRomics_vignette.pdf" target="_blank">here</a>.
+ 
+This vignette can be reached by:
+```r
+vignette("DRomics_vignette")
+```
+
+Note that, by default, the vignette is not installed when the package is installed through GitHub.
+The following command (rather long to execute because of the large size of the vignette) will allow you to access the vignette of the development version of the package you installed from GitHub:
+```r
+remotes::install_github("aursiber/DRomics", build_vignettes = TRUE)
+```
+
+
 # The shiny app 
 `DRomics-shiny` can be run on a R session, doing:
 ```r
@@ -47,7 +67,7 @@ shiny::runApp(system.file("DRomics-shiny", package = "DRomics"))
 ```
 
 or online at:
-<a href="http://lbbe-shiny.univ-lyon1.fr/DRomics-shiny/" target="_blank">http://lbbe-shiny.univ-lyon1.fr/DRomics-shiny/</a>
+<a href="http://lbbe-shiny.univ-lyon1.fr/DRomics/inst/DRomics-shiny/" target="_blank">http://lbbe-shiny.univ-lyon1.fr/DRomics/inst/DRomics-shiny/</a>
 
 This shiny app is runing with the development version of DRomics.
 
@@ -58,7 +78,7 @@ Issues can be reported on https://github.com/aursiber/DRomics/issues .
 
 - Elise Billoir: elise.billoir@univ-lorraine.fr
 - Marie-Laure Delignette-Muller: marielaure.delignettemuller@vetagro-sup.fr
-- Floriane Larras: floriane.larras@ufz.de
+- Floriane Larras: floriane.larras@inrae.fr
 - Mechthild Schmitt-Jansen: mechthild.schmitt@ufz.de
 - Aurélie Siberchicot: aurelie.siberchicot@univ-lyon1.fr
 

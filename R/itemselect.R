@@ -5,11 +5,12 @@ itemselect <- function(omicdata, select.method = c("quadratic", "linear", "ANOVA
   # Checks
   if (!(inherits(omicdata, "microarraydata") | 
         inherits(omicdata, "RNAseqdata") |
-        inherits(omicdata, "metabolomicdata") |
+        inherits(omicdata, "continuousomicdata") |
         inherits(omicdata, "continuousanchoringdata")))
-    stop("Use only with 'microarraydata', 'RNAseqdata', 'metabolomicdata' or 
+    stop("Use only with 'microarraydata', 'RNAseqdata', 'continuousomicdata' or 
     'continuousanchoringdata' objects, respectively
     created with functions 'microarraydata()', 'RNAseqdata()', 'metabolomicdata()'
+    or 'continuousomicdata()'
     and 'continuousanchoringdata()'.")
   select.method <- match.arg(select.method, c("quadratic", "linear", "ANOVA"))
   if (!is.numeric(FDR))
@@ -27,7 +28,7 @@ itemselect <- function(omicdata, select.method = c("quadratic", "linear", "ANOVA
   irow <- 1:length(item)
   
   if (inherits(omicdata,"microarraydata") | 
-      inherits(omicdata,"metabolomicdata"))
+      inherits(omicdata,"continuousomicdata"))
   {
     data <- omicdata$data
     if (select.method == "quadratic")
@@ -154,16 +155,23 @@ itemselect <- function(omicdata, select.method = c("quadratic", "linear", "ANOVA
   # value, at which non detection are imputed
   nsample <- length(dose)
   max4nties <- nsample * max.ties.prop
-  check.ties <- function(index)
+  if (length(selectindex) != 0) 
   {
-    datai <- data[index, ]
-    mini <- min(datai)
-    nbtiesi <- length(which(datai == mini))
-    return(nbtiesi < max4nties)
+    check.ties <- function(index)
+    {
+      datai <- data[index, ]
+      mini <- min(datai)
+      nbtiesi <- length(which(datai == mini))
+      return(nbtiesi < max4nties)
+    }
+    tokeep <- sapply(selectindex, check.ties)
+    selectindex <- selectindex[tokeep]
+    adjpvalue <- adjpvalue[tokeep]
+  } else
+  {
+    warning(strwrap(prefix = "\n", initial = "\n", 
+                    "NO ITEM WAS SELECTED."))
   }
-  tokeep <- sapply(selectindex, check.ties)
-  selectindex <- selectindex[tokeep]
-  adjpvalue <- adjpvalue[tokeep]
   
   reslist <- list(adjpvalue = adjpvalue, selectindex = selectindex, 
                   omicdata = omicdata, select.method = select.method, FDR = FDR)  
@@ -171,28 +179,28 @@ itemselect <- function(omicdata, select.method = c("quadratic", "linear", "ANOVA
   return(structure(reslist, class = "itemselect"))
 }
 
-print.itemselect <- function(x, ...)
+print.itemselect <- function(x, nfirstitems = 20, ...)
 {
   if (!inherits(x, "itemselect"))
     stop("Use only with 'itemselect' objects.")
   
   if (x$select.method == "ANOVA")
   {
-    cat("Number of selected items using an ANOVA type test with an FDR of ",x$FDR,": ", length(x$selectindex),"\n")
+    cat("Number of selected items using an ANOVA type test with an FDR of ", x$FDR, ": ", length(x$selectindex), "\n", sep = "")
   } else
     if (x$select.method == "linear")
     {
-      cat("Number of selected items using a linear trend test with an FDR of ",x$FDR,": ", length(x$selectindex),"\n")
+      cat("Number of selected items using a linear trend test with an FDR of ", x$FDR, ": ", length(x$selectindex), "\n", sep = "")
     } else
       if (x$select.method == "quadratic")
       {
-        cat("Number of selected items using a quadratic trend test with an FDR of ",x$FDR,": ", length(x$selectindex),"\n")
+        cat("Number of selected items using a quadratic trend test with an FDR of ", x$FDR, ": ", length(x$selectindex), "\n", sep = "")
       } 
   
-  if (length(x$selectindex) > 20) 
+  if (length(x$selectindex) > nfirstitems) 
   {
-    cat("Identifiers of the first 20 most responsive items:\n")
-    print(x$omicdata$item[x$selectindex[1:20]])
+    cat("Identifiers of the first ", nfirstitems, " most responsive items:\n", sep = "")
+    print(x$omicdata$item[x$selectindex[1:nfirstitems]])
   } else
   {
     cat("Identifiers of the responsive items:\n")
